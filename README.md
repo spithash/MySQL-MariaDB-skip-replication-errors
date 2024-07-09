@@ -13,6 +13,9 @@ sudo mysql -e "SHOW SLAVE STATUS\G"
 
 This script handles two error codes, 1032 and 1062
 
+![MySQL-MariaDB-skip-replication-errors](https://github.com/spithash/MySQL-MariaDB-skip-replication-errors/assets/3981730/c34618ae-cbf7-4e36-869a-b491db054b9b)
+
+
 ### Error Code 1032: Can't find record in 'table_name'
 
 This error occurs when a replication slave attempts to execute a statement that affects a row that does not exist on the slave. This is typically a problem with DELETE or UPDATE statements. In a replication setup, this usually indicates a discrepancy between the master and the slave databases.  
