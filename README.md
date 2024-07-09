@@ -45,3 +45,9 @@ Official mysql documentation:
 Data Inconsistency: These errors often arise from data inconsistencies between the master and the slave. If the data on the slave is not an exact copy of the master, operations like updates and deletions can fail.  
 Manual Interventions: Manual updates or deletions on the slave can lead to these errors if those changes are not reflected on the master.  
 Network Issues: Intermittent network issues can cause the slave to miss some of the replication events from the master, leading to inconsistencies.  
+
+## Using
+Run the script as sudo
+````
+sudo bash mysql-mariadb-skip-errors.sh
+````
