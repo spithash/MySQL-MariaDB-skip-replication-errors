@@ -14,6 +14,11 @@ ERROR_1062_COUNT=0
 while true; do
   echo -e "${CYAN}Checking MySQL slave status...${NC}"
   SLAVE_STATUS=$(mysql -e "SHOW SLAVE STATUS\G")
+
+  # Display output after 'Slave_SQL_Running_State:'
+  SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_STATUS" | awk '/Slave_SQL_Running_State:/ {print substr($0, index($0,$2))}')
+  echo -e "${YELLOW}${SLAVE_SQL_RUNNING_STATE}${NC}"
+
   LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\n')
   EXEC_MASTER_LOG_POS=$(echo "$SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
 
@@ -51,6 +56,7 @@ while true; do
 done
 
 # Display the error report
+echo -e "${CYAN}Script completed successfully.${NC}"
 echo -e "${CYAN}Error Report:${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
+echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions due to Error code 1032${NC}"
+echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions due to Error code 1062${NC}"
