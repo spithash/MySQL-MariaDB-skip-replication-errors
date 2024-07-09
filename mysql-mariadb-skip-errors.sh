@@ -61,7 +61,9 @@ while true; do
   sleep 1
 done
 
-# Display the error report
-echo -e "${CYAN}Error Report:${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
+# Display the error report if there are errors detected
+if [[ $ERROR_1032_COUNT -ne 0 || $ERROR_1062_COUNT -ne 0 ]]; then
+  echo -e "${CYAN}Error Report:${NC}"
+  echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
+  echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
+fi
