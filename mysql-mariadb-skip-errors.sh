@@ -58,5 +58,5 @@ done
 # Display the error report
 echo -e "${CYAN}Script completed successfully.${NC}"
 echo -e "${CYAN}Error Report:${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions due to Error code 1032${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions due to Error code 1062${NC}"
+echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
+echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
