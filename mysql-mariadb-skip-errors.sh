@@ -34,4 +34,4 @@ while true; do
   sleep 1
 done
 
-echo -e "${CYAN}Script completed.${NC}"
+echo -e "${CYAN}Script completed successfully.${NC}"
