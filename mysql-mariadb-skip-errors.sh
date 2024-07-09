@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # Define color codes
-RED='\033[1;31m'    # Bold red
-GREEN='\033[1;32m'  # Bold green
-YELLOW='\033[1;33m' # Bold yellow
-CYAN='\033[1;36m'   # Bold cyan
-NC='\033[0m'        # No Color
+RED='\033[1;31m'        # Bold red
+GREEN='\033[1;32m'      # Bold green
+YELLOW='\033[1;33m'     # Bold yellow
+CYAN='\033[1;36m'       # Bold cyan
+WHITE_BOLD='\033[1;37m' # Bold white
+NC='\033[0m'            # No Color
 
 # Initialize counters
 ERROR_1032_COUNT=0
@@ -19,10 +20,15 @@ while true; do
   SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_STATUS" | awk '/Slave_SQL_Running_State:/ {print substr($0, index($0,$2))}')
   echo -e "${YELLOW}${SLAVE_SQL_RUNNING_STATE}${NC}"
 
-  LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\n')
-  EXEC_MASTER_LOG_POS=$(echo "$SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
+  # Check if Last_SQL_Error is empty
+  LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*Last_SQL_Error: //' | tr -d '\n')
+  if [ -z "$LAST_SQL_ERROR" ]; then
+    echo -e "${YELLOW}Last_SQL_Error: ${GREEN}NULL ${WHITE_BOLD}(replication seems to be working)${NC}"
+  else
+    echo -e "${YELLOW}Last_SQL_Error: ${LAST_SQL_ERROR}${NC}"
+  fi
 
-  echo -e "${YELLOW}${LAST_SQL_ERROR}${NC}"
+  EXEC_MASTER_LOG_POS=$(echo "$SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
   echo -e "${YELLOW}Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS${NC}"
 
   if [[ $(echo "$LAST_SQL_ERROR" | grep -c -E "Error_code: 1032|Error_code: 1062") -gt 0 ]]; then
@@ -49,14 +55,17 @@ while true; do
       exit 1
     fi
   else
-    echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
+    if [ -z "$LAST_SQL_ERROR" ]; then
+      echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
+    else
+      echo -e "${GREEN}✓ No relevant error found.${NC}"
+    fi
     break
   fi
   sleep 1
 done
 
 # Display the error report
-echo -e "${CYAN}Script completed successfully.${NC}"
 echo -e "${CYAN}Error Report:${NC}"
 echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
 echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
