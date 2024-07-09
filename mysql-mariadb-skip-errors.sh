@@ -31,7 +31,7 @@ while true; do
     echo -e "${WHITE_BOLD}(replication seems to be working)${NC}"
   fi
 
-  if [[ $(echo "$LAST_SQL_ERROR" | grep -c -E "Error_code: 1032|Error_code: 1062") -gt 0 ]]; then
+  if [[ "$ERROR_1032_COUNT" -ne 0 || "$ERROR_1062_COUNT" -ne 0 ]]; then
     # Determine the error code
     ERROR_CODE=$(echo "$LAST_SQL_ERROR" | grep -oE "Error_code: [0-9]+" | cut -d' ' -f2)
 
@@ -62,7 +62,7 @@ while true; do
 done
 
 # Display the error report if there are errors detected
-if [[ $ERROR_1032_COUNT -ne 0 || $ERROR_1062_COUNT -ne 0 ]]; then
+if [[ "$ERROR_1032_COUNT" -ne 0 || "$ERROR_1062_COUNT" -ne 0 ]]; then
   echo -e "${CYAN}Error Report:${NC}"
   echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
   echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
