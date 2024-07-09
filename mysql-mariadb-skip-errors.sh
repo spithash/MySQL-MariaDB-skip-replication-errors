@@ -20,22 +20,16 @@ while true; do
   SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_STATUS" | awk '/Slave_SQL_Running_State:/ {print substr($0, index($0,$2))}')
   echo -e "${YELLOW}${SLAVE_SQL_RUNNING_STATE}${NC}"
 
-  # Check if Last_SQL_Error is empty
-  LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*Last_SQL_Error: //' | tr -d '\n')
+  LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\n')
+  EXEC_MASTER_LOG_POS=$(echo "$SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
   LAST_SQL_ERRNO=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Errno:" | awk '{print $2}')
 
-  if [ -z "$LAST_SQL_ERROR" ]; then
-    if [ "$LAST_SQL_ERRNO" -eq 0 ]; then
-      echo -e "${YELLOW}Last_SQL_Error: ${GREEN}NULL ${WHITE_BOLD}(replication seems to be working)${NC}"
-    else
-      echo -e "${YELLOW}Last_SQL_Error: ${GREEN}NULL${NC}"
-    fi
-  else
-    echo -e "${YELLOW}Last_SQL_Error: ${LAST_SQL_ERROR}${NC}"
-  fi
-
-  EXEC_MASTER_LOG_POS=$(echo "$SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
+  echo -e "${YELLOW}${LAST_SQL_ERROR}${NC}"
   echo -e "${YELLOW}Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS${NC}"
+
+  if [[ "$LAST_SQL_ERRNO" == "0" ]]; then
+    echo -e "${WHITE_BOLD}(replication seems to be working)${NC}"
+  fi
 
   if [[ $(echo "$LAST_SQL_ERROR" | grep -c -E "Error_code: 1032|Error_code: 1062") -gt 0 ]]; then
     # Determine the error code
@@ -61,11 +55,7 @@ while true; do
       exit 1
     fi
   else
-    if [ -z "$LAST_SQL_ERROR" ]; then
-      echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
-    else
-      echo -e "${GREEN}✓ No relevant error found.${NC}"
-    fi
+    echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
     break
   fi
   sleep 1
