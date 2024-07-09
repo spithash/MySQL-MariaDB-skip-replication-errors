@@ -22,8 +22,14 @@ while true; do
 
   # Check if Last_SQL_Error is empty
   LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*Last_SQL_Error: //' | tr -d '\n')
+  LAST_SQL_ERRNO=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Errno:" | awk '{print $2}')
+
   if [ -z "$LAST_SQL_ERROR" ]; then
-    echo -e "${YELLOW}Last_SQL_Error: ${GREEN}NULL ${WHITE_BOLD}(replication seems to be working)${NC}"
+    if [ "$LAST_SQL_ERRNO" -eq 0 ]; then
+      echo -e "${YELLOW}Last_SQL_Error: ${GREEN}NULL ${WHITE_BOLD}(replication seems to be working)${NC}"
+    else
+      echo -e "${YELLOW}Last_SQL_Error: ${GREEN}NULL${NC}"
+    fi
   else
     echo -e "${YELLOW}Last_SQL_Error: ${LAST_SQL_ERROR}${NC}"
   fi
