@@ -58,8 +58,9 @@ while true; do
     echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
     break
   fi
-  sleep 1
 done
+
+sleep 1
 
 # Display the error report if there are errors detected
 if [[ "$ERROR_1032_COUNT" -ne 0 || "$ERROR_1062_COUNT" -ne 0 ]]; then
