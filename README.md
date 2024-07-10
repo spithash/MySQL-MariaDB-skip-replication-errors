@@ -18,7 +18,7 @@ This script handles two error codes, `1032` and `1062`
 ### Error Code 1032: Can't find record in 'table_name'
 
 This error occurs when a replication slave attempts to execute a statement that affects a row that does not exist on the slave. This is typically a problem with DELETE or UPDATE statements. In a replication setup, this usually indicates a discrepancy between the master and the slave databases.  
-Common Causes:
+**Common Causes:**
         Data inconsistency between master and slave due to missed transactions.
         Manual changes to the data on the slave that were not replicated from the master.
         Network issues causing loss of replication data.
@@ -26,10 +26,8 @@ Common Causes:
 ### Error Code 1062: Duplicate entry 'key_value' for key 'PRIMARY'
 
 This error occurs when a replication slave tries to insert a row with a primary key that already exists in the table. This typically happens with INSERT or INSERT ... ON DUPLICATE KEY UPDATE statements.  
-Common Causes:
-        Data duplication due to re-running transactions or inserting data manually on the slave.
-        The same row being inserted on both the master and slave independently.
-        Incorrect or incomplete handling of unique constraints during data replication.
+
+**Common Causes:** Data duplication due to re-running transactions or inserting data manually on the slave. The same row being inserted on both the master and slave independently. Incorrect or incomplete handling of unique constraints during data replication.
 
 # Skipping errors
 These errors can be skipped with:
@@ -44,9 +42,9 @@ Official mysql documentation:
 
 ### Why These Errors Occur in Replication
 
-Data Inconsistency: These errors often arise from data inconsistencies between the master and the slave. If the data on the slave is not an exact copy of the master, operations like updates and deletions can fail.  
-Manual Interventions: Manual updates or deletions on the slave can lead to these errors if those changes are not reflected on the master.  
-Network Issues: Intermittent network issues can cause the slave to miss some of the replication events from the master, leading to inconsistencies.  
+**Data Inconsistency:** These errors often arise from data inconsistencies between the master and the slave. If the data on the slave is not an exact copy of the master, operations like updates and deletions can fail.  
+**Manual Interventions:** Manual updates or deletions on the slave can lead to these errors if those changes are not reflected on the master.  
+**Network Issues:** Intermittent network issues can cause the slave to miss some of the replication events from the master, leading to inconsistencies.  
 
 ## Using
 Run the script as `sudo` (assuming root can connect locally). There are cases where mariadb and/or mysql commands are not available to users with no super user privileges (sudoers).  
