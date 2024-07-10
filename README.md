@@ -37,7 +37,7 @@ These errors can be skipped with:
 ````
 SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1;
 ````
-Number 1 means skip one error at a time. This value can be increased.  
+Number 1 means skip/ignore one error at a time. This value can be increased.  
 Official mysql documentation:
 >This statement skips the next N events from the master. This is useful for recovering from replication stops caused by a statement.  
 >This statement is valid only when the slave threads are not running. Otherwise, it produces an error.  
