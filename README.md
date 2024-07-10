@@ -50,7 +50,7 @@ Manual Interventions: Manual updates or deletions on the slave can lead to these
 Network Issues: Intermittent network issues can cause the slave to miss some of the replication events from the master, leading to inconsistencies.  
 
 ## Using
-Run the script as sudo
+Run the script as sudo (assuming root can connect locally). Otherwise, use something like .my.cnf in your home folder.
 ````
 sudo bash mysql-mariadb-skip-errors.sh
 ````
