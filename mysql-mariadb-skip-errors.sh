@@ -21,7 +21,7 @@ ERROR_1062_COUNT=0
 
 while true; do
   echo -e "${CYAN}Checking MySQL slave status...${NC}"
-  SLAVE_STATUS=$($MYSQL_CMD -e "SHOW SLAVE STATUS\G")
+  SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS\G")
 
   # Display output after 'Slave_SQL_Running_State:'
   SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_STATUS" | awk '/Slave_SQL_Running_State:/ {print substr($0, index($0,$2))}')
@@ -43,9 +43,9 @@ while true; do
     ERROR_CODE=$(echo "$LAST_SQL_ERROR" | grep -oE "Error_code: [0-9]+" | cut -d' ' -f2)
 
     echo -e "${RED}Error detected at Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS. Skipping problematic transaction...${NC}"
-    $MYSQL_CMD -e "STOP SLAVE; SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1; START SLAVE;"
+    "$MYSQL_CMD" -e "STOP SLAVE; SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1; START SLAVE;"
     sleep 2
-    NEW_SLAVE_STATUS=$($MYSQL_CMD -e "SHOW SLAVE STATUS\G")
+    NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS\G")
     NEW_EXEC_MASTER_LOG_POS=$(echo "$NEW_SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
     echo -e "${GREEN}✓ Skipped one transaction. New Exec_Master_Log_Pos: $NEW_EXEC_MASTER_LOG_POS${NC}"
 
@@ -77,3 +77,5 @@ if [[ "$ERROR_1032_COUNT" -ne 0 || "$ERROR_1062_COUNT" -ne 0 ]]; then
   echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
   echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
 fi
+
+exit
