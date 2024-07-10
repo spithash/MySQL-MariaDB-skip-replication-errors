@@ -1,7 +1,7 @@
 # MySQL/MariaDB skip replication errors
 Skip Last_SQL_Error of your slave so replication continues
 
-Sometimes replication on the slave stops due to error(s) and they're printed out in 'Last_SQL_Error'  
+Sometimes replication on the slave stops due to error(s) and they're printed out in `Last_SQL_Error`  
 These errors can be viewed by either using this query:
 ````
 SHOW SLAVE STATUS \G;
@@ -11,7 +11,7 @@ Or in the terminal like so:
 sudo mysql -e "SHOW SLAVE STATUS\G" 
 ````
 
-This script handles two error codes, 1032 and 1062
+This script handles two error codes, `1032` and `1062`
 
 ![MySQL-MariaDB-skip-replication-errors](https://github.com/spithash/MySQL-MariaDB-skip-replication-errors/assets/3981730/d49a7339-5197-41cc-a456-3cc84912462f)
 
@@ -49,8 +49,8 @@ Manual Interventions: Manual updates or deletions on the slave can lead to these
 Network Issues: Intermittent network issues can cause the slave to miss some of the replication events from the master, leading to inconsistencies.  
 
 ## Using
-Run the script as sudo (assuming root can connect locally). There are cases where mariadb and/or mysql commands are not available to users with no super user privileges (sudoers).  
-Otherwise, use something like .my.cnf in your home folder.
+Run the script as `sudo` (assuming root can connect locally). There are cases where mariadb and/or mysql commands are not available to users with no super user privileges (sudoers).  
+Otherwise, use something like `.my.cnf` in your home folder.
 ````
 sudo bash mysql-mariadb-skip-errors.sh
 ````
