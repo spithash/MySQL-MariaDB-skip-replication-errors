@@ -58,6 +58,8 @@ while true; do
     echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
     break
   fi
+sleep 1
+  
 done
 
 sleep 1
