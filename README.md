@@ -13,8 +13,7 @@ sudo mysql -e "SHOW SLAVE STATUS\G"
 
 This script handles two error codes, 1032 and 1062
 
-![MySQL-MariaDB-skip-replication-errors](https://github.com/spithash/MySQL-MariaDB-skip-replication-errors/assets/3981730/c34618ae-cbf7-4e36-869a-b491db054b9b)
-
+![MySQL-MariaDB-skip-replication-errors](https://github.com/spithash/MySQL-MariaDB-skip-replication-errors/assets/3981730/d49a7339-5197-41cc-a456-3cc84912462f)
 
 ### Error Code 1032: Can't find record in 'table_name'
 
