@@ -8,13 +8,20 @@ CYAN='\033[1;36m'       # Bold cyan
 WHITE_BOLD='\033[1;37m' # Bold white
 NC='\033[0m'            # No Color
 
+# Check if mariadb command exists, otherwise use mysql
+if command -v mariadb &> /dev/null; then
+  MYSQL_CMD="mariadb"
+else
+  MYSQL_CMD="mysql"
+fi
+
 # Initialize counters
 ERROR_1032_COUNT=0
 ERROR_1062_COUNT=0
 
 while true; do
   echo -e "${CYAN}Checking MySQL slave status...${NC}"
-  SLAVE_STATUS=$(mysql -e "SHOW SLAVE STATUS\G")
+  SLAVE_STATUS=$($MYSQL_CMD -e "SHOW SLAVE STATUS\G")
 
   # Display output after 'Slave_SQL_Running_State:'
   SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_STATUS" | awk '/Slave_SQL_Running_State:/ {print substr($0, index($0,$2))}')
@@ -36,9 +43,9 @@ while true; do
     ERROR_CODE=$(echo "$LAST_SQL_ERROR" | grep -oE "Error_code: [0-9]+" | cut -d' ' -f2)
 
     echo -e "${RED}Error detected at Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS. Skipping problematic transaction...${NC}"
-    mysql -e "STOP SLAVE; SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1; START SLAVE;"
+    $MYSQL_CMD -e "STOP SLAVE; SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1; START SLAVE;"
     sleep 2
-    NEW_SLAVE_STATUS=$(mysql -e "SHOW SLAVE STATUS\G")
+    NEW_SLAVE_STATUS=$($MYSQL_CMD -e "SHOW SLAVE STATUS\G")
     NEW_EXEC_MASTER_LOG_POS=$(echo "$NEW_SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
     echo -e "${GREEN}✓ Skipped one transaction. New Exec_Master_Log_Pos: $NEW_EXEC_MASTER_LOG_POS${NC}"
 
@@ -58,8 +65,8 @@ while true; do
     echo -e "${GREEN}✓ No relevant error found. Exiting...${NC}"
     break
   fi
-sleep 1
-  
+  sleep 1
+
 done
 
 sleep 1
