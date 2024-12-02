@@ -9,7 +9,7 @@ WHITE_BOLD='\033[1;37m' # Bold white
 NC='\033[0m'            # No Color
 
 # Check if mariadb command exists, otherwise use mysql
-if command -v mariadb &> /dev/null; then
+if command -v mariadb &>/dev/null; then
   MYSQL_CMD="mariadb"
 else
   MYSQL_CMD="mysql"
