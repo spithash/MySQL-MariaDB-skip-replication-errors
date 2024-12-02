@@ -54,5 +54,5 @@ sudo bash mysql-mariadb-skip-errors.sh
 ````
 OR
 ````
-sudo bash forloop.sh
+bash forloop.sh
 ````
