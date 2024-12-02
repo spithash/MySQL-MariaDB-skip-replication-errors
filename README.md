@@ -52,3 +52,7 @@ Otherwise, use something like `.my.cnf` in your home folder.
 ````
 sudo bash mysql-mariadb-skip-errors.sh
 ````
+OR
+````
+sudo bash forloop.sh
+````
