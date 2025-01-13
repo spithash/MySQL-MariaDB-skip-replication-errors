@@ -44,7 +44,7 @@ while true; do
     "$MYSQL_CMD" -e "STOP SLAVE;"
     "$MYSQL_CMD" -e "SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1;"
     "$MYSQL_CMD" -e "START SLAVE;"
-    sleep 2
+    sleep 1
     
     # Verify slave status
     NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS\G")
