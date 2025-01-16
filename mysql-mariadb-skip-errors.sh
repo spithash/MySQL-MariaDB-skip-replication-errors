@@ -21,7 +21,7 @@ ERROR_1062_COUNT=0
 
 while true; do
   echo -e "${CYAN}Checking MySQL slave status...${NC}"
-  SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS\G")
+  SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW ALL SLAVES STATUS\G")
 
   SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_STATUS" | awk '/Slave_SQL_Running_State:/ {print substr($0, index($0,$2))}')
   LAST_SQL_ERROR=$(echo "$SLAVE_STATUS" | grep "Last_SQL_Error:" | sed 's/^[ \t]*//;s/[ \t]*$//' | tr -d '\n')
@@ -47,7 +47,7 @@ while true; do
     sleep 1
     
     # Verify slave status
-    NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS\G")
+    NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW ALL SLAVES STATUS\G")
     NEW_EXEC_MASTER_LOG_POS=$(echo "$NEW_SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
     echo -e "${GREEN}✓ Skipped one transaction. New Exec_Master_Log_Pos: $NEW_EXEC_MASTER_LOG_POS${NC}"
 
