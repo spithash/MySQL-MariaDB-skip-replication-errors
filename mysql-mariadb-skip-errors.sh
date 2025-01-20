@@ -89,7 +89,7 @@ while true; do
     else
       echo -e "${GREEN}✓ No relevant error found for this slave. Moving to the next...${NC}"
     fi
-    sleep 1
+#    sleep 1
   done
 
   break
