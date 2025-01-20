@@ -63,7 +63,7 @@ while true; do
       "$MYSQL_CMD" -e "STOP SLAVE '${CONNECTION_NAME}';"
       "$MYSQL_CMD" -e "SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1;"
       "$MYSQL_CMD" -e "START SLAVE '${CONNECTION_NAME}';"
-      sleep 1
+#      sleep 1
 
       # Verify slave status
       NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS FOR CHANNEL '${CONNECTION_NAME}'\G")
@@ -85,7 +85,7 @@ while true; do
     else
       echo -e "${GREEN}✓ No relevant error found for this slave. Moving to the next...${NC}"
     fi
-    sleep 1
+#    sleep 1
   done
 
   break
