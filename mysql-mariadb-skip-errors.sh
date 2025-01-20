@@ -19,8 +19,10 @@ fi
 ERROR_1032_COUNT=0
 ERROR_1062_COUNT=0
 
+# Print initial status
+echo -e "${CYAN}Checking MySQL slave status...${NC}"
+
 while true; do
-  echo -e "${CYAN}Checking MySQL slave status...${NC}"
   SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW ALL SLAVES STATUS\G")
 
   # Split the output by rows (each master starts with "***************************")
@@ -33,6 +35,7 @@ while true; do
     break
   fi
 
+  # Process each slave individually
   for ((i = 0; i < SLAVE_COUNT; i++)); do
     # Extract the row for the current slave
     if [ $((i + 1)) -lt "$SLAVE_COUNT" ]; then
@@ -47,6 +50,7 @@ while true; do
     EXEC_MASTER_LOG_POS=$(echo "$SLAVE_ROW" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
     LAST_SQL_ERRNO=$(echo "$SLAVE_ROW" | grep "Last_SQL_Errno:" | awk '{print $2}')
 
+    # Display slave status and errors
     echo -e "${YELLOW}Slave_SQL_Running_State: ${SLAVE_SQL_RUNNING_STATE}${NC}"
     echo -e "${YELLOW}${LAST_SQL_ERROR}${NC}"
     echo -e "${YELLOW}Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS${NC}"
@@ -60,13 +64,13 @@ while true; do
       echo -e "${RED}Error detected for slave at Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS. Skipping problematic transaction...${NC}"
 
       # Stop slave and skip transaction
-      "$MYSQL_CMD" -e "STOP SLAVE '${CONNECTION_NAME}';"
+      "$MYSQL_CMD" -e "STOP SLAVE;"
       "$MYSQL_CMD" -e "SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1;"
-      "$MYSQL_CMD" -e "START SLAVE '${CONNECTION_NAME}';"
-#      sleep 1
+      "$MYSQL_CMD" -e "START SLAVE;"
+      sleep 1
 
       # Verify slave status
-      NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW SLAVE STATUS FOR CHANNEL '${CONNECTION_NAME}'\G")
+      NEW_SLAVE_STATUS=$("$MYSQL_CMD" -e "SHOW ALL SLAVES STATUS\G")
       NEW_EXEC_MASTER_LOG_POS=$(echo "$NEW_SLAVE_STATUS" | grep "Exec_Master_Log_Pos:" | awk '{print $2}')
       echo -e "${GREEN}✓ Skipped one transaction. New Exec_Master_Log_Pos: $NEW_EXEC_MASTER_LOG_POS${NC}"
 
@@ -85,16 +89,15 @@ while true; do
     else
       echo -e "${GREEN}✓ No relevant error found for this slave. Moving to the next...${NC}"
     fi
-#    sleep 1
+    sleep 1
   done
 
   break
 done
 
-if [[ "$ERROR_1032_COUNT" -ne 0 || "$ERROR_1062_COUNT" -ne 0 ]]; then
-  echo -e "${CYAN}Error Report:${NC}"
-  echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
-  echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
-fi
+# Final report
+echo -e "${CYAN}Error Report:${NC}"
+echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
+echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
 
 exit
