@@ -49,7 +49,7 @@ while true; do
     fi
 
     # Extract values
-    SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_ROW" | awk -F': ' '/Slave_SQL_Running:/ {print $2}')
+    SLAVE_SQL_RUNNING_STATE=$(echo "$SLAVE_ROW" | awk -F': ' '/Slave_SQL_Running_State:/ {print $2}')
     EXEC_MASTER_LOG_POS=$(echo "$SLAVE_ROW" | awk -F': ' '/Exec_Master_Log_Pos:/ {print $2}')
     LAST_SQL_ERRNO=$(echo "$SLAVE_ROW" | awk -F': ' '/Last_SQL_Errno:/ {print $2}')
     CONNECTION_NAME=$(echo "$SLAVE_ROW" | awk -F': ' '/Connection_name:/ {print $2}')
@@ -59,7 +59,7 @@ while true; do
 
     # Display information
     echo -e "${CYAN}Checking slave: ${CONNECTION_NAME:-DEFAULT}${NC}"
-    echo -e "${YELLOW}Slave_SQL_Running_State: ${SLAVE_SQL_RUNNING_STATE}${NC}"
+    echo -e "${YELLOW}Slave_SQL_Running_State: ${SLAVE_SQL_RUNNING_STATE}${NC}"  # Full message now displayed
     echo -e "${YELLOW}Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS${NC}"
     
     if [[ -z "$LAST_SQL_ERRNO" || "$LAST_SQL_ERRNO" == "0" ]]; then
@@ -112,10 +112,12 @@ while true; do
   fi
 done
 
-# Final report
-echo -e "${CYAN}Error Report:${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
-echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
-echo -e "${YELLOW}Other errors detected: ${ERROR_OTHER_COUNT}${NC}"
+# Ensure error report is only printed once at the end
+if [[ $ERROR_1032_COUNT -gt 0 || $ERROR_1062_COUNT -gt 0 || $ERROR_OTHER_COUNT -gt 0 ]]; then
+  echo -e "${CYAN}\nError Report:${NC}"
+  echo -e "${YELLOW}Skipped ${ERROR_1032_COUNT} transactions with error code 1032${NC}"
+  echo -e "${YELLOW}Skipped ${ERROR_1062_COUNT} transactions with error code 1062${NC}"
+  echo -e "${YELLOW}Other errors detected: ${ERROR_OTHER_COUNT}${NC}"
+fi
 
 exit 0
