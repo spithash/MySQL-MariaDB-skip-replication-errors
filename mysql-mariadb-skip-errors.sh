@@ -63,7 +63,7 @@ while true; do
     echo -e "${YELLOW}Exec_Master_Log_Pos: $EXEC_MASTER_LOG_POS${NC}"
     
     if [[ -z "$LAST_SQL_ERRNO" || "$LAST_SQL_ERRNO" == "0" ]]; then
-      echo -e "${WHITE_BOLD}(Replication for this slave seems to be working)${NC}"
+      echo -e "${WHITE_BOLD}(Replication for this master seems to be working)${NC}"
       continue
     fi
 
